@@ -107,7 +107,7 @@ const SplashScreen: React.FC<SplashScreenProps> = ({ onFinish }) => {
             source={require('../../assets/klyenora-logo.png')}
             style={styles.logoImage}
             resizeMode="contain"
-            accessibilityLabel="Client Nest logo"
+            accessibilityLabel="Klyenora logo"
           />
           <Text style={styles.subtitle}>Every client, clearly connected.</Text>
         </Animated.View>
