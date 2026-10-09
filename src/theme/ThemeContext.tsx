@@ -71,11 +71,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   // TODO: Persist themeMode to AsyncStorage for cross-session memory
   //
   // useEffect(() => {
-  //   AsyncStorage.setItem('@clientnest/theme', themeMode);
+  //   AsyncStorage.setItem('@klyenora/theme', themeMode);
   // }, [themeMode]);
   //
   // useEffect(() => {
-  //   AsyncStorage.getItem('@clientnest/theme').then(saved => {
+  //   AsyncStorage.getItem('@klyenora/theme').then(saved => {
   //     if (saved) setThemeMode(saved as ThemeMode);
   //   });
   // }, []);

@@ -1,5 +1,5 @@
 /**
- * Color Palette — ClientNest Design System
+ * Color Palette — Klyenora Design System
  *
  * All raw colour tokens live here.  Screens and components should
  * consume colours through the theme (see `theme.ts`), never import

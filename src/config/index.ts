@@ -10,16 +10,16 @@ const developmentApiBaseUrl = Platform.select({
  */
 
 export const APP_CONFIG = {
-  name: 'ClientNest',
+  name: 'Klyenora',
   version: '0.0.1',
   apiBaseUrl: __DEV__
     ? developmentApiBaseUrl
-    : 'https://api.clientnest.app/v1',
+    : 'https://api.klyenora.app/v1',
   storageKeys: {
-    authToken: '@clientnest/auth_token',
-    refreshToken: '@clientnest/refresh_token',
-    themeMode: '@clientnest/theme_mode',
-    onboarded: '@clientnest/onboarded',
+    authToken: '@klyenora/auth_token',
+    refreshToken: '@klyenora/refresh_token',
+    themeMode: '@klyenora/theme_mode',
+    onboarded: '@klyenora/onboarded',
   },
   pagination: {
     defaultPageSize: 20,

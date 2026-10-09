@@ -1,5 +1,5 @@
 /**
- * ClientNest — App Entry
+ * Klyenora — App Entry
  *
  * Wraps the entire tree in ThemeProvider and SafeAreaProvider.
  *
