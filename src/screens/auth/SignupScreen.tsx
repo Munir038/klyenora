@@ -38,6 +38,13 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Focus states
+  const [nameFocused, setNameFocused] = useState(false);
+  const [phoneFocused, setPhoneFocused] = useState(false);
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [confirmFocused, setConfirmFocused] = useState(false);
+
   const validateName = () => {
     const nextError = name.trim().length >= 2 ? '' : 'Enter your full name.';
     setNameError(nextError);
@@ -88,59 +95,240 @@ const SignupScreen: React.FC<Props> = ({ navigation }) => {
     <SafeAreaView style={styles.safeArea}>
       <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView style={styles.flex} behavior={Platform.OS === 'ios' ? 'padding' : undefined}>
-        <ScrollView contentContainerStyle={styles.signupScrollContent} keyboardShouldPersistTaps="handled" showsVerticalScrollIndicator={false}>
-          <LinearGradient colors={['#001D67', '#00144E', '#00092C']} locations={[0, 0.52, 1]} start={{ x: 0, y: 0 }} end={{ x: 0.88, y: 1 }} style={styles.background} />
-          <View style={[styles.dot, styles.dotTop]} />
-          <View style={[styles.dot, styles.dotRight]} />
-          <View style={styles.bottomRing} />
-          <View style={styles.bottomGlow} />
+        <ScrollView
+          contentContainerStyle={styles.signupScrollContent}
+          keyboardShouldPersistTaps="handled"
+          showsVerticalScrollIndicator={false}
+        >
+          {/* ── Multi-layer gradient background ─────────── */}
+          <LinearGradient
+            colors={['#00144D', '#000E38', '#000824', '#000414']}
+            locations={[0, 0.35, 0.7, 1]}
+            start={{ x: 0.1, y: 0 }}
+            end={{ x: 0.9, y: 1 }}
+            style={styles.background}
+          />
+
+          {/* ── Decorative ambient elements ─────────────── */}
+          <View pointerEvents="none" style={styles.decorationsContainer}>
+            <View style={[styles.dot, styles.dotTop]} />
+            <View style={[styles.dot, styles.dotRight]} />
+            <View style={styles.orbTopRight} />
+            <View style={styles.orbMidLeft} />
+            <View style={styles.bottomRing} />
+            <View style={styles.bottomGlow} />
+          </View>
 
           <View style={styles.signupContent}>
-            <Image source={require('../../assets/klyenora-logo.png')} style={styles.signupLogoImage} resizeMode="contain" accessibilityLabel="Klyenora logo" />
-            <Text style={styles.signupTitle}>Create your account</Text>
-            <Text style={styles.tagline}>Start managing every client in one place.</Text>
-
-            <View style={styles.signupForm}>
-              <View style={[styles.field, nameError ? styles.fieldError : undefined]}>
-                <Feather name="user" size={18} color="#AFC5EB" />
-                <TextInput placeholder="Full name" placeholderTextColor="#B9C9E6" style={styles.input} value={name} onChangeText={value => { setName(value); if (nameError) setNameError(''); }} onBlur={validateName} autoComplete="name" returnKeyType="next" />
-              </View>
-              {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
-              <View style={[styles.field, styles.passwordField, phoneError ? styles.fieldError : undefined]}>
-                <Feather name="phone" size={18} color="#AFC5EB" />
-                <TextInput placeholder="Phone number" placeholderTextColor="#B9C9E6" style={styles.input} value={phone} onChangeText={value => { setPhone(value); if (phoneError) setPhoneError(''); }} onBlur={validatePhone} autoComplete="tel" keyboardType="phone-pad" returnKeyType="next" />
-              </View>
-              {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
-              <View style={[styles.field, styles.passwordField, emailError ? styles.fieldError : undefined]}>
-                <Feather name="mail" size={18} color="#AFC5EB" />
-                <TextInput placeholder="Email address" placeholderTextColor="#B9C9E6" style={styles.input} value={email} onChangeText={value => { setEmail(value); if (emailError) setEmailError(''); }} onBlur={validateEmail} autoCapitalize="none" autoComplete="email" keyboardType="email-address" returnKeyType="next" />
-              </View>
-              {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
-              <View style={[styles.field, styles.passwordField, passwordError ? styles.fieldError : undefined]}>
-                <Feather name="lock" size={18} color="#AFC5EB" />
-                <TextInput placeholder="Password" placeholderTextColor="#B9C9E6" style={styles.input} value={password} onChangeText={value => { setPassword(value); if (passwordError) setPasswordError(''); }} onBlur={validatePassword} secureTextEntry={!isPasswordVisible} autoComplete="new-password" returnKeyType="next" />
-                <Pressable onPress={() => setIsPasswordVisible(visible => !visible)} hitSlop={10} style={styles.eyeButton}>
-                  <Feather name={isPasswordVisible ? 'eye-off' : 'eye'} size={18} color="#AFC5EB" />
-                </Pressable>
-              </View>
-              {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
-              <View style={[styles.field, styles.passwordField, confirmPasswordError ? styles.fieldError : undefined]}>
-                <Feather name="shield" size={18} color="#AFC5EB" />
-                <TextInput placeholder="Confirm password" placeholderTextColor="#B9C9E6" style={styles.input} value={confirmPassword} onChangeText={value => { setConfirmPassword(value); if (confirmPasswordError) setConfirmPasswordError(''); }} onBlur={validateConfirmPassword} secureTextEntry={!isPasswordVisible} onSubmitEditing={handleSignup} returnKeyType="done" />
-              </View>
-              {confirmPasswordError ? <Text style={styles.errorText}>{confirmPasswordError}</Text> : null}
-              <Pressable accessibilityRole="button" disabled={isSubmitting} onPress={handleSignup} style={({ pressed }) => [styles.signInButton, pressed && styles.buttonPressed, isSubmitting && styles.buttonDisabled]}>
-                <LinearGradient colors={['#0D81FF', '#0865EA']} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.signInGradient}>
-                  {isSubmitting ? <ActivityIndicator color="#FFFFFF" /> : <View style={styles.loginButtonContent}><Text style={styles.signInText}>Create account</Text><Feather name="arrow-right" size={19} color="#FFFFFF" style={styles.arrow} /></View>}
-                </LinearGradient>
-              </Pressable>
+            {/* ── Header: Logo ─────────────────────────── */}
+            <View style={styles.headerGroup}>
+              <Image
+                source={require('../../assets/klyenora-logo.png')}
+                style={styles.signupLogoImage}
+                resizeMode="contain"
+                accessibilityLabel="Klyenora logo"
+              />
+              <Text style={styles.tagline}>Every client, clearly connected.</Text>
             </View>
 
-            <View style={styles.dividerRow}><View style={styles.divider} /><Text style={styles.dividerText}>OR</Text><View style={styles.divider} /></View>
-            <Pressable accessibilityRole="button" onPress={() => Alert.alert('Google sign-up', 'Google sign-up will be available soon.')} style={({ pressed }) => [styles.googleButton, pressed && styles.buttonPressed]}>
-              <FontAwesome name="google" size={19} color="#FFFFFF" style={styles.googleMark} /><Text style={styles.googleButtonText}>Continue with Google</Text>
-            </Pressable>
-            <View style={styles.signupRow}><Text style={styles.signupText}>Already have an account? </Text><Pressable onPress={() => navigation.goBack()} hitSlop={8}><Text style={styles.signupLink}>Log In</Text></Pressable></View>
+            {/* ── Elevated Off-White Card ────────────────── */}
+            <View style={styles.authCard}>
+              <Text style={styles.signupTitle}>Create your account</Text>
+
+              <View style={styles.signupForm}>
+                {/* Full name */}
+                <Text style={styles.fieldLabel}>Full Name</Text>
+                <View
+                  style={[
+                    styles.field,
+                    nameFocused && styles.fieldFocused,
+                    nameError ? styles.fieldError : undefined,
+                  ]}
+                >
+                  <Feather name="user" size={16} color={nameFocused ? '#0D81FF' : '#64748B'} />
+                  <TextInput
+                    placeholder="John Doe"
+                    placeholderTextColor="#94A3B8"
+                    style={styles.input}
+                    value={name}
+                    onChangeText={value => { setName(value); if (nameError) setNameError(''); }}
+                    onFocus={() => setNameFocused(true)}
+                    onBlur={() => { setNameFocused(false); validateName(); }}
+                    autoComplete="name"
+                    returnKeyType="next"
+                  />
+                </View>
+                {nameError ? <Text style={styles.errorText}>{nameError}</Text> : null}
+
+                {/* Phone */}
+                <View style={styles.passwordField}>
+                  <Text style={styles.fieldLabel}>Phone</Text>
+                  <View
+                    style={[
+                      styles.field,
+                      phoneFocused && styles.fieldFocused,
+                      phoneError ? styles.fieldError : undefined,
+                    ]}
+                  >
+                    <Feather name="phone" size={16} color={phoneFocused ? '#0D81FF' : '#64748B'} />
+                    <TextInput
+                      placeholder="+91 98765 43210"
+                      placeholderTextColor="#94A3B8"
+                      style={styles.input}
+                      value={phone}
+                      onChangeText={value => { setPhone(value); if (phoneError) setPhoneError(''); }}
+                      onFocus={() => setPhoneFocused(true)}
+                      onBlur={() => { setPhoneFocused(false); validatePhone(); }}
+                      autoComplete="tel"
+                      keyboardType="phone-pad"
+                      returnKeyType="next"
+                    />
+                  </View>
+                </View>
+                {phoneError ? <Text style={styles.errorText}>{phoneError}</Text> : null}
+
+                {/* Email */}
+                <View style={styles.passwordField}>
+                  <Text style={styles.fieldLabel}>Email address</Text>
+                  <View
+                    style={[
+                      styles.field,
+                      emailFocused && styles.fieldFocused,
+                      emailError ? styles.fieldError : undefined,
+                    ]}
+                  >
+                    <Feather name="mail" size={16} color={emailFocused ? '#0D81FF' : '#64748B'} />
+                    <TextInput
+                      placeholder="your@email.com"
+                      placeholderTextColor="#94A3B8"
+                      style={styles.input}
+                      value={email}
+                      onChangeText={value => { setEmail(value); if (emailError) setEmailError(''); }}
+                      onFocus={() => setEmailFocused(true)}
+                      onBlur={() => { setEmailFocused(false); validateEmail(); }}
+                      autoCapitalize="none"
+                      autoComplete="email"
+                      keyboardType="email-address"
+                      returnKeyType="next"
+                    />
+                  </View>
+                </View>
+                {emailError ? <Text style={styles.errorText}>{emailError}</Text> : null}
+
+                {/* Password */}
+                <View style={styles.passwordField}>
+                  <Text style={styles.fieldLabel}>Password</Text>
+                  <View
+                    style={[
+                      styles.field,
+                      passwordFocused && styles.fieldFocused,
+                      passwordError ? styles.fieldError : undefined,
+                    ]}
+                  >
+                    <Feather name="lock" size={16} color={passwordFocused ? '#0D81FF' : '#64748B'} />
+                    <TextInput
+                      placeholder="••••••••"
+                      placeholderTextColor="#94A3B8"
+                      style={styles.input}
+                      value={password}
+                      onChangeText={value => { setPassword(value); if (passwordError) setPasswordError(''); }}
+                      onFocus={() => setPasswordFocused(true)}
+                      onBlur={() => { setPasswordFocused(false); validatePassword(); }}
+                      secureTextEntry={!isPasswordVisible}
+                      autoComplete="new-password"
+                      returnKeyType="next"
+                    />
+                    <Pressable onPress={() => setIsPasswordVisible(v => !v)} hitSlop={10} style={styles.eyeButton}>
+                      <Feather name={isPasswordVisible ? 'eye-off' : 'eye'} size={16} color="#64748B" />
+                    </Pressable>
+                  </View>
+                </View>
+                {passwordError ? <Text style={styles.errorText}>{passwordError}</Text> : null}
+
+                {/* Confirm password */}
+                <View style={styles.passwordField}>
+                  <Text style={styles.fieldLabel}>Confirm Password</Text>
+                  <View
+                    style={[
+                      styles.field,
+                      confirmFocused && styles.fieldFocused,
+                      confirmPasswordError ? styles.fieldError : undefined,
+                    ]}
+                  >
+                    <Feather name="shield" size={16} color={confirmFocused ? '#0D81FF' : '#64748B'} />
+                    <TextInput
+                      placeholder="••••••••"
+                      placeholderTextColor="#94A3B8"
+                      style={styles.input}
+                      value={confirmPassword}
+                      onChangeText={value => { setConfirmPassword(value); if (confirmPasswordError) setConfirmPasswordError(''); }}
+                      onFocus={() => setConfirmFocused(true)}
+                      onBlur={() => { setConfirmFocused(false); validateConfirmPassword(); }}
+                      secureTextEntry={!isPasswordVisible}
+                      onSubmitEditing={handleSignup}
+                      returnKeyType="done"
+                    />
+                  </View>
+                </View>
+                {confirmPasswordError ? <Text style={styles.errorText}>{confirmPasswordError}</Text> : null}
+
+                {/* CTA button with glow */}
+                <View style={styles.buttonGlowWrapper}>
+                  <View pointerEvents="none" style={styles.buttonGlow} />
+                  <Pressable
+                    accessibilityRole="button"
+                    disabled={isSubmitting}
+                    onPress={handleSignup}
+                    style={({ pressed }) => [
+                      styles.signInButton,
+                      pressed && styles.buttonPressed,
+                      isSubmitting && styles.buttonDisabled,
+                    ]}
+                  >
+                    <LinearGradient
+                      colors={['#0D81FF', '#0865EA', '#0052CC']}
+                      start={{ x: 0, y: 0 }}
+                      end={{ x: 1, y: 1 }}
+                      style={styles.signInGradient}
+                    >
+                      {isSubmitting ? (
+                        <ActivityIndicator color="#FFFFFF" />
+                      ) : (
+                        <View style={styles.loginButtonContent}>
+                          <Text style={styles.signInText}>Create Account</Text>
+                          <Feather name="arrow-right" size={17} color="#FFFFFF" style={styles.arrow} />
+                        </View>
+                      )}
+                    </LinearGradient>
+                  </Pressable>
+                </View>
+
+                {/* Divider */}
+                <View style={styles.dividerRow}>
+                  <View style={styles.divider} />
+                  <Text style={styles.dividerText}>or</Text>
+                  <View style={styles.divider} />
+                </View>
+
+                {/* Google sign-up */}
+                <Pressable
+                  accessibilityRole="button"
+                  onPress={() => Alert.alert('Google sign-up', 'Google sign-up will be available soon.')}
+                  style={({ pressed }) => [styles.googleButton, pressed && styles.buttonPressed]}
+                >
+                  <FontAwesome name="google" size={17} color="#EA4335" style={styles.googleMark} />
+                  <Text style={styles.googleButtonText}>Continue with Google</Text>
+                </Pressable>
+
+                {/* Back to Login link */}
+                <View style={styles.signupRow}>
+                  <Text style={styles.signupText}>Already have an account? </Text>
+                  <Pressable onPress={() => navigation.goBack()} hitSlop={8}>
+                    <Text style={styles.signupLink}>Log In</Text>
+                  </Pressable>
+                </View>
+              </View>
+            </View>
           </View>
         </ScrollView>
       </KeyboardAvoidingView>
