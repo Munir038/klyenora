@@ -12,6 +12,7 @@ import {
 import { NativeStackNavigationProp, NativeStackScreenProps } from '@react-navigation/native-stack';
 import Feather from 'react-native-vector-icons/Feather';
 import { AuthStackParamList, RootStackParamList } from '../../../types/navigation';
+import { useTheme } from '../../../theme';
 import { validateOtp } from '../../../utils/validation';
 import {
   AuthBackground,
@@ -27,6 +28,7 @@ import { styles } from './styles';
 type Props = NativeStackScreenProps<AuthStackParamList, 'OtpVerification'>;
 
 export const OtpScreen: React.FC<Props> = ({ route, navigation }) => {
+  const { isDark } = useTheme();
   const { phone, email } = route.params ?? {};
   const [otp, setOtp] = useState('');
   const [error, setError] = useState<string | null>(null);
@@ -68,8 +70,13 @@ export const OtpScreen: React.FC<Props> = ({ route, navigation }) => {
   const destinationText = phone || email || 'your mobile number';
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        { backgroundColor: isDark ? '#000F38' : '#EBF3FF' },
+      ]}
+    >
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <AuthBackground />
 
       <KeyboardAvoidingView
@@ -103,13 +110,25 @@ export const OtpScreen: React.FC<Props> = ({ route, navigation }) => {
                     if (error) setError(null);
                   }}
                   onSubmitEditing={handleVerify}
-                  leftIcon={<Feather name="key" size={16} color="#0D81FF" />}
+                  leftIcon={
+                    <Feather
+                      name="key"
+                      size={16}
+                      color={isDark ? '#38BDF8' : '#0D81FF'}
+                    />
+                  }
                   inputStyle={styles.otpInputText}
                 />
 
                 {/* Resend Timer Row */}
                 <View style={styles.resendRow}>
-                  <Text variant="caption" style={styles.resendPrompt}>
+                  <Text
+                    variant="caption"
+                    style={[
+                      styles.resendPrompt,
+                      { color: isDark ? '#94A3B8' : '#64748B' },
+                    ]}
+                  >
                     Didn't receive the code?{' '}
                   </Text>
                   <Pressable
@@ -121,6 +140,7 @@ export const OtpScreen: React.FC<Props> = ({ route, navigation }) => {
                       variant="caption"
                       style={[
                         styles.resendAction,
+                        { color: isDark ? '#38BDF8' : '#0D81FF' },
                         resendTimer > 0 && styles.resendDisabled,
                       ]}
                     >

@@ -5,13 +5,13 @@
  */
 
 import React from 'react';
+import { StyleSheet, View, useWindowDimensions } from 'react-native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context';
 import Feather from 'react-native-vector-icons/Feather';
 import { MainTabParamList } from '../types/navigation';
 import { useTheme } from '../theme';
-import { FONT_FAMILY, FONT_SIZE } from '../constants/typography';
-import { COMPONENT_HEIGHT } from '../constants/dimensions';
+import { FONT_FAMILY } from '../constants/typography';
 
 // Screens
 import { DashboardScreen } from '../screens/dashboard';
@@ -23,34 +23,56 @@ import { ClientListScreen } from '../screens/clients';
 const Tab = createBottomTabNavigator<MainTabParamList>();
 
 const MainNavigator: React.FC = () => {
-  const { colors } = useTheme();
+  const { isDark } = useTheme();
   const insets = useSafeAreaInsets();
+  const { width: screenWidth } = useWindowDimensions();
+
+  // Responsive floating dock width: centered on tablets, comfortable on mobile
+  const isWide = screenWidth >= 600;
+  const dockWidth = isWide ? Math.min(screenWidth * 0.7, 480) : screenWidth - 28;
+  const horizontalMargin = Math.max(14, (screenWidth - dockWidth) / 2);
+
+  const activeColor = isDark ? '#A78BFA' : '#6C3CE1';
+  const inactiveColor = isDark ? '#7E869E' : '#64748B';
 
   return (
-    <SafeAreaView style={{ flex: 1, backgroundColor: colors.tabBarBackground }} edges={['top']}>
+    <SafeAreaView style={{ flex: 1, backgroundColor: isDark ? '#0F101A' : '#F8FAFC' }} edges={['top']}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           headerShown: false,
-          tabBarActiveTintColor: '#001D67',
-          tabBarInactiveTintColor: colors.tabBarInactive,
+          tabBarLabelPosition: 'below-icon',
+          tabBarActiveTintColor: activeColor,
+          tabBarInactiveTintColor: inactiveColor,
           tabBarStyle: {
             position: 'absolute',
-            left: 16,
-            right: 16,
-            bottom: insets.bottom + 12,
-            backgroundColor: colors.tabBarBackground,
+            left: horizontalMargin,
+            right: horizontalMargin,
+            bottom: insets.bottom > 0 ? insets.bottom + 8 : 14,
+            backgroundColor: isDark ? '#141829' : '#FFFFFF',
             borderTopWidth: 0,
-            height: COMPONENT_HEIGHT.tabBar,
+            borderWidth: 1.2,
+            borderColor: isDark ? 'rgba(255, 255, 255, 0.1)' : 'rgba(0, 0, 0, 0.08)',
+            height: 66,
             paddingTop: 6,
             paddingBottom: 6,
-            marginHorizontal: 12,
-            borderRadius: 100,
+            borderRadius: 22,
+            shadowColor: isDark ? '#000000' : '#0F172A',
+            shadowOffset: { width: 0, height: 8 },
+            shadowOpacity: isDark ? 0.5 : 0.1,
+            shadowRadius: 18,
+            elevation: 12,
+          },
+          tabBarItemStyle: {
+            justifyContent: 'center',
+            alignItems: 'center',
+            paddingVertical: 2,
           },
           tabBarLabelStyle: {
             fontFamily: FONT_FAMILY.semiBold,
-            fontSize: FONT_SIZE.xxs,
+            fontSize: 10.5,
+            marginTop: 2,
           },
-          tabBarIcon: ({ color, size }) => {
+          tabBarIcon: ({ color, focused }) => {
             const icons = {
               HomeTab: 'home',
               LeadsTab: 'users',
@@ -59,7 +81,20 @@ const MainNavigator: React.FC = () => {
               SettingsTab: 'settings',
             } as const;
 
-            return <Feather name={icons[route.name]} size={size} color={color} />;
+            return (
+              <View
+                style={[
+                  styles.tabIconPill,
+                  focused && {
+                    backgroundColor: isDark
+                      ? 'rgba(167, 139, 250, 0.18)'
+                      : 'rgba(108, 60, 225, 0.1)',
+                  },
+                ]}
+              >
+                <Feather name={icons[route.name]} size={20} color={color} />
+              </View>
+            );
           },
         })}
       >
@@ -72,5 +107,15 @@ const MainNavigator: React.FC = () => {
     </SafeAreaView>
   );
 };
+
+const styles = StyleSheet.create({
+  tabIconPill: {
+    width: 44,
+    height: 28,
+    borderRadius: 14,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
 
 export default MainNavigator;

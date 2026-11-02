@@ -48,7 +48,7 @@ export const Input: React.FC<InputProps> = ({
   onBlur,
   ...rest
 }) => {
-  const { colors } = useTheme();
+  const { colors, isDark } = useTheme();
   const [isFocused, setIsFocused] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
 
@@ -64,12 +64,36 @@ export const Input: React.FC<InputProps> = ({
 
   const isSecured = isPassword ? !showPassword : secureTextEntry;
 
+  const getBackgroundColor = () => {
+    if (error) {
+      return isDark ? 'rgba(239, 68, 68, 0.08)' : '#FEF2F2';
+    }
+    if (isFocused) {
+      return isDark ? '#16234D' : '#FFFFFF';
+    }
+    return isDark ? '#080E24' : '#F8FAFC';
+  };
+
+  const getBorderColor = () => {
+    if (error) {
+      return '#EF4444';
+    }
+    if (isFocused) {
+      return isDark ? '#38BDF8' : '#0D81FF';
+    }
+    return isDark ? '#1E2D58' : '#E2E8F0';
+  };
+
   return (
     <View style={[styles.wrapper, containerStyle]}>
       {label ? (
         <Text
           variant="caption"
-          style={[styles.label, labelStyle]}
+          style={[
+            styles.label,
+            { color: isDark ? '#94A3B8' : '#334155' },
+            labelStyle,
+          ]}
         >
           {label}
         </Text>
@@ -79,14 +103,10 @@ export const Input: React.FC<InputProps> = ({
         style={[
           styles.inputContainer,
           {
-            backgroundColor: isFocused ? '#FFFFFF' : '#F8FAFC',
-            borderColor: error
-              ? '#EF4444'
-              : isFocused
-              ? '#0D81FF'
-              : '#E2E8F0',
+            backgroundColor: getBackgroundColor(),
+            borderColor: getBorderColor(),
           },
-          isFocused && styles.inputFocused,
+          isFocused && (isDark ? styles.inputFocusedDark : styles.inputFocused),
           error ? styles.inputError : undefined,
           inputContainerStyle,
         ]}
@@ -96,10 +116,10 @@ export const Input: React.FC<InputProps> = ({
         <RNTextInput
           style={[
             styles.textInput,
-            { color: '#0F172A' },
+            { color: isDark ? '#FFFFFF' : '#0F172A' },
             inputStyle,
           ]}
-          placeholderTextColor="#94A3B8"
+          placeholderTextColor={isDark ? 'rgba(148, 163, 184, 0.6)' : '#94A3B8'}
           secureTextEntry={isSecured}
           onFocus={handleFocus}
           onBlur={handleBlur}
@@ -117,7 +137,7 @@ export const Input: React.FC<InputProps> = ({
             <Feather
               name={showPassword ? 'eye-off' : 'eye'}
               size={ms(16)}
-              color="#64748B"
+              color={isDark ? '#94A3B8' : '#64748B'}
             />
           </Pressable>
         ) : rightIcon ? (
@@ -139,28 +159,34 @@ const styles = StyleSheet.create({
     width: '100%',
   },
   label: {
-    marginBottom: mvs(5),
+    marginBottom: mvs(6),
     marginLeft: ms(2),
-    color: '#334155',
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: fs(11),
-    letterSpacing: 0.5,
+    letterSpacing: 0.6,
     textTransform: 'uppercase',
   },
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    height: mvs(47),
-    paddingHorizontal: ms(13),
-    borderWidth: 1,
-    borderRadius: ms(11),
+    height: mvs(48),
+    paddingHorizontal: ms(14),
+    borderWidth: 1.2,
+    borderRadius: ms(12),
   },
   inputFocused: {
     shadowColor: '#0D81FF',
     shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.08,
-    shadowRadius: 5,
-    elevation: 2,
+    shadowOpacity: 0.12,
+    shadowRadius: 6,
+    elevation: 3,
+  },
+  inputFocusedDark: {
+    shadowColor: '#38BDF8',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    elevation: 4,
   },
   inputError: {
     borderColor: '#EF4444',
@@ -171,7 +197,7 @@ const styles = StyleSheet.create({
     fontFamily: FONT_FAMILY.medium,
     fontSize: fs(13.5),
     paddingVertical: 0,
-    marginLeft: ms(8),
+    marginLeft: ms(10),
   },
   leftIconContainer: {
     justifyContent: 'center',
@@ -187,10 +213,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   errorText: {
-    marginTop: mvs(4),
+    marginTop: mvs(5),
     marginLeft: ms(2),
     color: '#EF4444',
-    fontFamily: FONT_FAMILY.regular,
-    fontSize: fs(10.5),
+    fontFamily: FONT_FAMILY.medium,
+    fontSize: fs(11),
   },
 });

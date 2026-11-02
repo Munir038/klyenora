@@ -5,6 +5,7 @@
 import React from 'react';
 import { Pressable, StyleSheet, ViewStyle } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { useTheme } from '../../theme';
 import { FONT_FAMILY } from '../../constants/typography';
 import { fs, ms, mvs } from '../../utils/metrics';
 import { Text } from '../common/Text';
@@ -22,12 +23,19 @@ export const SocialAuthButton: React.FC<SocialAuthButtonProps> = ({
   label = 'Continue with Google',
   style,
 }) => {
+  const { isDark } = useTheme();
+
   return (
     <Pressable
       accessibilityRole="button"
       onPress={onPress}
       style={({ pressed }) => [
         styles.button,
+        {
+          backgroundColor: isDark ? '#141E3C' : '#FFFFFF',
+          borderColor: isDark ? '#22325A' : '#E2E8F0',
+          shadowColor: isDark ? '#000000' : '#0F172A',
+        },
         pressed && styles.pressed,
         style,
       ]}
@@ -43,11 +51,17 @@ export const SocialAuthButton: React.FC<SocialAuthButtonProps> = ({
         <FontAwesome
           name="apple"
           size={ms(18)}
-          color="#000000"
+          color={isDark ? '#FFFFFF' : '#000000'}
           style={styles.icon}
         />
       )}
-      <Text variant="button" style={styles.buttonText}>
+      <Text
+        variant="button"
+        style={[
+          styles.buttonText,
+          { color: isDark ? '#FFFFFF' : '#1E293B' },
+        ]}
+      >
         {label}
       </Text>
     </Pressable>
@@ -60,15 +74,12 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     width: '100%',
-    height: mvs(45),
+    height: mvs(46),
     borderWidth: 1,
-    borderColor: '#E2E8F0',
-    borderRadius: ms(11),
-    backgroundColor: '#FFFFFF',
-    shadowColor: '#0F172A',
+    borderRadius: ms(12),
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.04,
-    shadowRadius: 2,
+    shadowOpacity: 0.06,
+    shadowRadius: 3,
     elevation: 1,
   },
   pressed: {
@@ -79,7 +90,6 @@ const styles = StyleSheet.create({
     marginRight: ms(10),
   },
   buttonText: {
-    color: '#1E293B',
     fontFamily: FONT_FAMILY.semiBold,
     fontSize: fs(12.5),
     letterSpacing: 0.2,

@@ -2,8 +2,8 @@
  * Theme Context & Provider
  *
  * Wrap your app root with <ThemeProvider> to enable `useTheme()`
- * throughout the tree.  Supports system-preference detection, user
- * override, and persistence via AsyncStorage.
+ * throughout the tree. Supports system-preference detection, user
+ * override, and local persistence via AsyncStorage.
  */
 
 import React, {
@@ -15,10 +15,13 @@ import React, {
   useState,
 } from 'react';
 import { useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { darkTheme, lightTheme, Theme, ThemeColors } from './theme';
 
 // ─── Types ───────────────────────────────────────────────────────
 export type ThemeMode = 'light' | 'dark' | 'system';
+
+const STORAGE_KEY = '@klyenora/theme_preference';
 
 interface ThemeContextValue {
   /** The resolved theme object */
@@ -31,7 +34,7 @@ interface ThemeContextValue {
   themeMode: ThemeMode;
   /** Toggle between light and dark (skips 'system') */
   toggleTheme: () => void;
-  /** Set an explicit mode */
+  /** Set an explicit mode and save to local storage */
   setThemeMode: (mode: ThemeMode) => void;
 }
 
@@ -49,7 +52,33 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   initialMode = 'system',
 }) => {
   const systemScheme = useColorScheme(); // 'light' | 'dark' | null
-  const [themeMode, setThemeMode] = useState<ThemeMode>(initialMode);
+  const [themeMode, setThemeModeState] = useState<ThemeMode>(initialMode);
+
+  // ─── Load saved preference from local storage ─────────────────
+  useEffect(() => {
+    let isMounted = true;
+    AsyncStorage.getItem(STORAGE_KEY)
+      .then(saved => {
+        if (isMounted && (saved === 'light' || saved === 'dark' || saved === 'system')) {
+          setThemeModeState(saved);
+        }
+      })
+      .catch(err => {
+        console.warn('Failed to load theme preference from AsyncStorage:', err);
+      });
+
+    return () => {
+      isMounted = false;
+    };
+  }, []);
+
+  // ─── Persist preference to local storage ───────────────────────
+  const setThemeMode = useCallback((mode: ThemeMode) => {
+    setThemeModeState(mode);
+    AsyncStorage.setItem(STORAGE_KEY, mode).catch(err => {
+      console.warn('Failed to save theme preference to AsyncStorage:', err);
+    });
+  }, []);
 
   // Resolve which theme to use
   const resolvedDark = useMemo(() => {
@@ -62,23 +91,9 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   const theme = resolvedDark ? darkTheme : lightTheme;
 
   const toggleTheme = useCallback(() => {
-    setThemeMode(prev => {
-      if (prev === 'system') return resolvedDark ? 'light' : 'dark';
-      return prev === 'dark' ? 'light' : 'dark';
-    });
-  }, [resolvedDark]);
-
-  // TODO: Persist themeMode to AsyncStorage for cross-session memory
-  //
-  // useEffect(() => {
-  //   AsyncStorage.setItem('@klyenora/theme', themeMode);
-  // }, [themeMode]);
-  //
-  // useEffect(() => {
-  //   AsyncStorage.getItem('@klyenora/theme').then(saved => {
-  //     if (saved) setThemeMode(saved as ThemeMode);
-  //   });
-  // }, []);
+    const nextMode: ThemeMode = resolvedDark ? 'light' : 'dark';
+    setThemeMode(nextMode);
+  }, [resolvedDark, setThemeMode]);
 
   const value = useMemo<ThemeContextValue>(
     () => ({
@@ -89,7 +104,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       toggleTheme,
       setThemeMode,
     }),
-    [theme, resolvedDark, themeMode, toggleTheme],
+    [theme, resolvedDark, themeMode, toggleTheme, setThemeMode],
   );
 
   return (

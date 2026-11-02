@@ -29,8 +29,8 @@ export const Divider: React.FC<DividerProps> = ({
   style,
   labelStyle,
 }) => {
-  const { colors } = useTheme();
-  const dividerColor = color ?? colors.divider;
+  const { colors, isDark } = useTheme();
+  const dividerColor = color ?? (isDark ? '#22325A' : colors.divider);
 
   if (vertical) {
     return (
@@ -59,7 +59,11 @@ export const Divider: React.FC<DividerProps> = ({
         <View style={[styles.flexLine, { backgroundColor: dividerColor }]} />
         <Text
           variant="caption"
-          style={[styles.labelText, labelStyle]}
+          style={[
+            styles.labelText,
+            { color: isDark ? '#64748B' : '#94A3B8' },
+            labelStyle,
+          ]}
         >
           {label}
         </Text>

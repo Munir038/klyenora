@@ -11,6 +11,7 @@ import {
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import Feather from 'react-native-vector-icons/Feather';
 import { AuthStackParamList } from '../../../types/navigation';
+import { useTheme } from '../../../theme';
 import {
   validateConfirmPassword,
   validateEmail,
@@ -33,6 +34,7 @@ import { styles } from './styles';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Signup'>;
 
 export const SignupScreen: React.FC<Props> = ({ navigation }) => {
+  const { isDark } = useTheme();
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
@@ -74,8 +76,13 @@ export const SignupScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        { backgroundColor: isDark ? '#000F38' : '#EBF3FF' },
+      ]}
+    >
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <AuthBackground />
 
       <KeyboardAvoidingView
@@ -110,7 +117,13 @@ export const SignupScreen: React.FC<Props> = ({ navigation }) => {
                     setName(val);
                     if (nameError) setNameError(null);
                   }}
-                  leftIcon={<Feather name="user" size={16} color="#0D81FF" />}
+                  leftIcon={
+                    <Feather
+                      name="user"
+                      size={16}
+                      color={isDark ? '#38BDF8' : '#0D81FF'}
+                    />
+                  }
                 />
 
                 {/* Mobile Number */}
@@ -126,7 +139,13 @@ export const SignupScreen: React.FC<Props> = ({ navigation }) => {
                     setPhone(val);
                     if (phoneError) setPhoneError(null);
                   }}
-                  leftIcon={<Feather name="phone" size={16} color="#0D81FF" />}
+                  leftIcon={
+                    <Feather
+                      name="phone"
+                      size={16}
+                      color={isDark ? '#38BDF8' : '#0D81FF'}
+                    />
+                  }
                 />
 
                 {/* Email Address */}
@@ -144,7 +163,13 @@ export const SignupScreen: React.FC<Props> = ({ navigation }) => {
                     setEmail(val);
                     if (emailError) setEmailError(null);
                   }}
-                  leftIcon={<Feather name="mail" size={16} color="#0D81FF" />}
+                  leftIcon={
+                    <Feather
+                      name="mail"
+                      size={16}
+                      color={isDark ? '#38BDF8' : '#0D81FF'}
+                    />
+                  }
                 />
 
                 {/* Password */}
@@ -160,7 +185,13 @@ export const SignupScreen: React.FC<Props> = ({ navigation }) => {
                     setPassword(val);
                     if (passwordError) setPasswordError(null);
                   }}
-                  leftIcon={<Feather name="lock" size={16} color="#0D81FF" />}
+                  leftIcon={
+                    <Feather
+                      name="lock"
+                      size={16}
+                      color={isDark ? '#38BDF8' : '#0D81FF'}
+                    />
+                  }
                 />
 
                 {/* Confirm Password */}
@@ -177,7 +208,13 @@ export const SignupScreen: React.FC<Props> = ({ navigation }) => {
                     if (confirmError) setConfirmError(null);
                   }}
                   onSubmitEditing={handleSignup}
-                  leftIcon={<Feather name="shield" size={16} color="#0D81FF" />}
+                  leftIcon={
+                    <Feather
+                      name="shield"
+                      size={16}
+                      color={isDark ? '#38BDF8' : '#0D81FF'}
+                    />
+                  }
                 />
 
                 {/* Primary CTA */}

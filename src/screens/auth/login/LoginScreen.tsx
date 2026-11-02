@@ -14,6 +14,7 @@ import Feather from 'react-native-vector-icons/Feather';
 import { AuthStackParamList, RootStackParamList } from '../../../types/navigation';
 import { authService } from '../../../services/api/authService';
 import apiClient from '../../../services/api/client';
+import { useTheme } from '../../../theme';
 import { validateEmail, validatePassword } from '../../../utils/validation';
 import {
   AuthBackground,
@@ -31,6 +32,7 @@ import { styles } from './styles';
 type Props = NativeStackScreenProps<AuthStackParamList, 'Login'>;
 
 export const LoginScreen: React.FC<Props> = ({ navigation }) => {
+  const { colors, isDark } = useTheme();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -73,8 +75,13 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
   };
 
   return (
-    <SafeAreaView style={styles.safeArea}>
-      <StatusBar barStyle="light-content" />
+    <SafeAreaView
+      style={[
+        styles.safeArea,
+        { backgroundColor: isDark ? '#000F38' : '#EBF3FF' },
+      ]}
+    >
+      <StatusBar barStyle={isDark ? 'light-content' : 'dark-content'} />
       <AuthBackground />
 
       <KeyboardAvoidingView
@@ -108,7 +115,11 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
                     if (emailError) setEmailError(null);
                   }}
                   leftIcon={
-                    <Feather name="mail" size={16} color="#0D81FF" />
+                    <Feather
+                      name="mail"
+                      size={16}
+                      color={isDark ? '#38BDF8' : '#0D81FF'}
+                    />
                   }
                 />
 
@@ -128,7 +139,11 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   }}
                   onSubmitEditing={handleLogin}
                   leftIcon={
-                    <Feather name="lock" size={16} color="#0D81FF" />
+                    <Feather
+                      name="lock"
+                      size={16}
+                      color={isDark ? '#38BDF8' : '#0D81FF'}
+                    />
                   }
                 />
 
@@ -138,7 +153,13 @@ export const LoginScreen: React.FC<Props> = ({ navigation }) => {
                   hitSlop={10}
                   style={styles.forgotButton}
                 >
-                  <Text variant="caption" style={styles.forgotText}>
+                  <Text
+                    variant="caption"
+                    style={[
+                      styles.forgotText,
+                      { color: isDark ? '#38BDF8' : '#0D81FF' },
+                    ]}
+                  >
                     Forgot password?
                   </Text>
                 </Pressable>
